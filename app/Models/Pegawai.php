@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Pegawai extends Model
+{
+    use HasFactory;
+    protected $table = 'pegawais'; // kalau memakai nama tabel custom
+
+    protected $fillable = [
+        'nama',
+        'jabatan',
+        'alamat',
+        'telepon',
+        'email',
+        'tgl_masuk',
+        'gaji',
+    ];
+}
