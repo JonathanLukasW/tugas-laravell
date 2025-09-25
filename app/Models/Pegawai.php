@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Pegawai extends Model
 {
     use HasFactory;
-    protected $table = 'pegawais'; // kalau memakai nama tabel custom
+    protected $table = 'pegawais';
 
     protected $fillable = [
         'nama',
