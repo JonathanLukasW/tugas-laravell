@@ -6,10 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('pegawais', function (Blueprint $table) {
             $table->id();
@@ -20,14 +17,12 @@ return new class extends Migration
             $table->string('email');
             $table->date('tgl_masuk')->nullable();
             $table->integer('gaji');
+            $table->softDeletes(); // penting untuk soft delete
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('pegawais');
     }
