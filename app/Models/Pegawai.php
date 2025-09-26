@@ -10,6 +10,6 @@ class Pegawai extends Model
      use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'nama', 'jabatan', 'alamat', 'telepon', 'email', 'tgl_masuk', 'gaji'
+        'nama', 'jabatan', 'alamat', 'telepon', 'email', 'tgl_masuk', 'gaji','photo_path'
     ];
 }

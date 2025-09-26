@@ -28,7 +28,7 @@
                         <thead class="table-dark">
                             <tr>
                                 <th>No</th>
-                                <th>Nama</th>
+                                <th>Foto</th> <th>Nama</th>
                                 <th>Jabatan</th>
                                 <th>Alamat</th>
                                 <th>Telepon</th>
@@ -43,6 +43,15 @@
                             @foreach ($pegawai as $index => $p)
                                 <tr @if($p->trashed()) class="table-danger" @endif>
                                     <td>{{ $index + 1 }}</td>
+                                    <td>
+                                        @php
+                                            $photoPath = $p->photo_path 
+                                                         ? Storage::url($p->photo_path) 
+                                                         : asset('images/default_pegawai.png');
+                                        @endphp
+                                        <img src="{{ $photoPath }}" alt="{{ $p->nama }}" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                                    </td>
+                                    
                                     <td>
                                         {{ $p->nama }}
                                         @if($p->trashed())

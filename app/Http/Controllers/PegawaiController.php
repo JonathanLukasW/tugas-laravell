@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pegawai;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PegawaiController extends Controller
 {
@@ -13,7 +14,6 @@ class PegawaiController extends Controller
         return view('hrd.pegawai', compact('pegawai'));
     }
 
-
     public function create()
     {
         return view('hrd.create');
@@ -21,7 +21,6 @@ class PegawaiController extends Controller
 
     public function store(Request $request)
     {
-
         $request->validate([
             'nama' => 'required|string|max:100|unique:pegawais,nama',
             'jabatan' => 'required|string|max:50',
@@ -30,22 +29,22 @@ class PegawaiController extends Controller
             'email' => 'required|email|unique:pegawais,email',
             'tgl_masuk' => 'required|date',
             'gaji' => 'required|numeric|min:0',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
         ], [
             'nama.required' => 'Nama pegawai wajib diisi.',
-            'nama.unique' => 'Nama pegawai sudah terdaftar, tolong gunakan nama lain.',
-            'jabatan.required' => 'Jabatan wajib diisi.',
-            'alamat.required' => 'Alamat wajib diisi.',
-            'telepon.required' => 'Nomor telepon wajib diisi.',
-            'telepon.unique' => 'Nomor telepon sudah digunakan pegawai lain.',
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email sudah digunakan.',
-            'tgl_masuk.required' => 'Tanggal masuk wajib diisi.',
-            'gaji.required' => 'Gaji wajib diisi.',
-            'gaji.numeric' => 'Gaji harus berupa angka.',
         ]);
 
-        Pegawai::create($request->all());
+        $data = $request->except('photo');
+
+        if ($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $data['photo_path'] = $file->storeAs('public/pegawai-photos', $filename); 
+        } else {
+            $data['photo_path'] = null;
+        }
+
+        Pegawai::create($data);
 
         return redirect()->route('hrd.pegawai.index')->with('success', 'Data pegawai berhasil ditambahkan!');
     }
@@ -60,7 +59,7 @@ class PegawaiController extends Controller
     {
         $pegawai = Pegawai::findOrFail($id);
 
-        $validated = $request->validate([
+        $request->validate([
             'nama'      => 'required|string|max:100|unique:pegawais,nama,' . $pegawai->id,
             'jabatan'   => 'required|string|max:100',
             'alamat'    => 'required|string|max:255',
@@ -68,9 +67,23 @@ class PegawaiController extends Controller
             'email'     => 'required|email|max:100|unique:pegawais,email,' . $pegawai->id,
             'tgl_masuk' => 'required|date',
             'gaji'      => 'required|numeric|min:0',
+            'photo'     => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
         ]);
+        
+        $data = $request->except('photo');
 
-        $pegawai->update($validated);
+        if ($request->hasFile('photo')) {
+            if ($pegawai->photo_path) {
+                Storage::delete($pegawai->photo_path);
+            }
+            $file = $request->file('photo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $data['photo_path'] = $file->storeAs('public/pegawai-photos', $filename);
+        } else {
+             $data['photo_path'] = $pegawai->photo_path;
+        }
+        
+        $pegawai->update($data);
 
         return redirect()->route('hrd.pegawai.index')
             ->with('success', 'Data pegawai berhasil diperbarui!');
@@ -79,20 +92,23 @@ class PegawaiController extends Controller
     public function destroy($id)
     {
         $pegawai = Pegawai::findOrFail($id);
+        
+        if ($pegawai->photo_path) {
+            Storage::delete($pegawai->photo_path);
+        }
+
         $pegawai->delete();
 
-        return redirect()->route('hrd.pegawai.index')
-            ->with('success', 'Pegawai berhasil dihapus.');
+        return redirect()->route('hrd.pegawai.index')->with('success', 'Pegawai berhasil dihapus.');
     }
 
     public function restore($id)
     {
         $pegawai = Pegawai::withTrashed()->findOrFail($id);
         $pegawai->restore();
-
-        return redirect()->route('hrd.pegawai.index')
-            ->with('success', 'Pegawai berhasil dikembalikan.');
+        return redirect()->route('hrd.pegawai.index')->with('success', 'Pegawai berhasil dikembalikan.');
     }
+    
     public function trashed()
     {
         $pegawai = Pegawai::onlyTrashed()->get();

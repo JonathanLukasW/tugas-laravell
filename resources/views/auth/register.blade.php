@@ -8,7 +8,7 @@
                 <div class="card-header">{{ __('Register') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}">
+                    <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data"> 
                         @csrf
 
                         <div class="row mb-3">
@@ -38,10 +38,20 @@
                                 @enderror
                             </div>
                         </div>
+                        
+                        <div class="row mb-3">
+                            <label for="profile_photo" class="col-md-4 col-form-label text-md-end">{{ __('Foto Profil') }}</label>
 
-                        <!-- ========================================================== -->
-                        <!-- KODE BARU: Field Nomor Telepon -->
-                        <!-- ========================================================== -->
+                            <div class="col-md-6">
+                                <input id="profile_photo" type="file" class="form-control @error('profile_photo') is-invalid @enderror" name="profile_photo" accept="image/*">
+
+                                @error('profile_photo')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
                         <div class="row mb-3">
                             <label for="phone_number" class="col-md-4 col-form-label text-md-end">{{ __('Nomor Telepon') }}</label>
 
@@ -56,9 +66,6 @@
                             </div>
                         </div>
 
-                        <!-- ========================================================== -->
-                        <!-- KODE BARU: Field Alamat -->
-                        <!-- ========================================================== -->
                         <div class="row mb-3">
                             <label for="address" class="col-md-4 col-form-label text-md-end">{{ __('Alamat') }}</label>
 
@@ -73,8 +80,6 @@
                             </div>
                         </div>
                         
-                        <!-- ========================================================== -->
-
                         <div class="row mb-3">
                             <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
 

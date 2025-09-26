@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage; 
 
 class ProfileController extends Controller
 {
@@ -22,13 +23,25 @@ class ProfileController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            // Email tidak perlu divalidasi 'unique' karena readonly di View
             'phone_number' => 'nullable|string|max:15',
             'address' => 'nullable|string|max:255',
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validasi foto
         ]);
 
+        if ($request->hasFile('profile_photo')) {
+            $file = $request->file('profile_photo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+
+            $path = $file->storeAs('public/profile-photos', $filename);
+            
+            if ($user->profile_photo_path) {
+                Storage::delete($user->profile_photo_path);
+            }
+
+            $user->profile_photo_path = $path;
+        }
+
         $user->name = $request->name;
-        // $user->email tidak perlu diupdate karena sudah readonly
         $user->phone_number = $request->phone_number;
         $user->address = $request->address;
         $user->save(); 
@@ -36,7 +49,6 @@ class ProfileController extends Controller
         return redirect()->route('profile.edit')->with('success', 'Profil berhasil diperbarui!');
     }
     
-    // Metode ini yang harus ada untuk mengatasi error 'updatePassword does not exist'
     public function updatePassword(Request $request) 
     {
         $request->validate([

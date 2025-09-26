@@ -21,8 +21,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'phone_number', // PASTIKAN INI ADA
-        'address',      // PASTIKAN INI ADA
+        'phone_number',
+        'address',
+        'profile_photo_path',
+        'photo_path'
     ];
 
     /**
@@ -35,5 +37,4 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    // ... (sisa kode Model Anda)
 }

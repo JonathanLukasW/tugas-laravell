@@ -8,7 +8,6 @@
             </div>
             <div class="card-body">
 
-                {{-- Error umum --}}
                 @if ($errors->any())
                 <div class="alert alert-danger">
                     <strong>Periksa kembali inputan Anda!</strong>
@@ -20,7 +19,7 @@
                 </div>
                 @endif
 
-                <form action="{{ route('hrd.pegawai.store') }}" method="POST">
+                <form action="{{ route('hrd.pegawai.store') }}" method="POST" enctype="multipart/form-data"> 
                     @csrf
 
                     <div class="mb-3">
@@ -72,6 +71,16 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+                    
+                    <div class="mb-3">
+                        <label for="photo" class="form-label">Foto Pegawai (Max 2MB)</label>
+                        <input type="file" name="photo" id="photo"
+                            class="form-control @error('photo') is-invalid @enderror"
+                            accept="image/*">
+                        @error('photo')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
                     <div class="mb-3">
                         <label for="tgl_masuk" class="form-label">Tanggal Masuk</label>
@@ -99,5 +108,4 @@
             </div>
         </div>
     </div>
-
 @endsection

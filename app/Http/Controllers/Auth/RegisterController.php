@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage; 
 
 class RegisterController extends Controller
 {
@@ -52,11 +53,9 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            // ==========================================================
-            // VALIDASI BARU: Nomor Telepon & Alamat
-            // ==========================================================
             'phone_number' => ['nullable', 'string', 'max:15'], 
             'address' => ['nullable', 'string', 'max:255'],
+            'profile_photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], 
         ]);
     }
 
@@ -68,15 +67,23 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $photoPath = null;
+        
+        // 1. Simpan Foto Profil jika diunggah
+        if (isset($data['profile_photo'])) {
+            $file = $data['profile_photo']; 
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $photoPath = $file->storeAs('public/profile-photos', $filename);
+        }
+
+        // 2. Buat User di database
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            // ==========================================================
-            // PENYIMPANAN DATA BARU: Nomor Telepon & Alamat
-            // ==========================================================
             'phone_number' => $data['phone_number'] ?? null,
             'address' => $data['address'] ?? null,
+            'profile_photo_path' => $photoPath, 
         ]);
     }
 }

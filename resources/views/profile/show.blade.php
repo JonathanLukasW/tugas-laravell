@@ -13,8 +13,6 @@
                     <p><strong>Email:</strong> {{ $user->email }}</p>
                     <p><strong>Nomor Telepon:</strong> {{ $user->phone_number ?? '-' }}</p>
                     <p><strong>Alamat:</strong> {{ $user->address ?? '-' }}</p>
-                    
-                    <!-- Tambahkan link kembali ke halaman utama jika diperlukan -->
                     <a href="{{ route('home') }}" class="btn btn-secondary mt-3">Kembali ke Beranda</a>
                 </div>
             </div>
