@@ -28,7 +28,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/hrd/pegawai';
 
     /**
      * Create a new controller instance.
@@ -52,6 +52,11 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            // ==========================================================
+            // VALIDASI BARU: Nomor Telepon & Alamat
+            // ==========================================================
+            'phone_number' => ['nullable', 'string', 'max:15'], 
+            'address' => ['nullable', 'string', 'max:255'],
         ]);
     }
 
@@ -67,6 +72,11 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            // ==========================================================
+            // PENYIMPANAN DATA BARU: Nomor Telepon & Alamat
+            // ==========================================================
+            'phone_number' => $data['phone_number'] ?? null,
+            'address' => $data['address'] ?? null,
         ]);
     }
 }
